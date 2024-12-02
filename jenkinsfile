@@ -24,3 +24,8 @@ pipeline {
           docker build -t chosshh/spring-petclinic:$BUILD_NUMBER
           docker tag -t chosshh/spring-petclinic:$BUILD_NUMBER chosshh/spring-petclinic:latest
         """
+        }
+      }
+    }
+  }
+}
