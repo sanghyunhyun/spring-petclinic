@@ -4,12 +4,18 @@ pipeline {
   tools {
     jdk 'jdk17'
     maven 'M3'
+   }
+
+  // Docker Hub 접속 정보
+  environment {
+    DOCKER_CREDENTIALS = credentials('dockerCredentials')
   }
 
   stages {
+    // GitHub에서 Jenkins로 소스코드 복제
     stage('Git Clone') {
       steps {
-        git url : https://github.com/sanghyunhyun/spring-petclinic.git/
+        git url : https://github.com/sanghyunhyun/spring-petclinic.git/ , branch 'main'
     }
   }
   stages('Maven Build') {
@@ -25,6 +31,15 @@ pipeline {
           docker tag -t chosshh/spring-petclinic:$BUILD_NUMBER chosshh/spring-petclinic:latest
         """
         }
+      }
+    }
+
+  stage ('Docker Image Push') {
+    steps {
+      sh """
+        echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin
+        docker push chosshh/spring-petclinic:latest
+      """
       }
     }
   }
